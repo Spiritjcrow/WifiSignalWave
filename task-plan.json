@@ -1,0 +1,5 @@
+{"version":1,"project":"WifiSignalWave","target":"owned-device","tasks":[
+{"id":"build","title":"Build production Android controller and Termux worker","dependsOn":[],"approval":"auto","capabilities":["github-actions","android-sdk","python3"],"acceptance":["APK compiles","Termux worker compiles"],"sideEffects":["Creates project source"],"rollback":"Revert the scoped branch"},
+{"id":"publish","title":"Publish review branch","dependsOn":["build"],"approval":"confirm","capabilities":["github"],"acceptance":["Draft pull request is available"],"sideEffects":["Creates GitHub branch, commit, and draft PR"],"rollback":"Close PR and delete scoped branch"},
+{"id":"device","title":"Verify on authorized owned device","dependsOn":["publish"],"approval":"confirm","capabilities":["owned-android-device","termux-api"],"acceptance":["Real scan archived and synced","Diagnostic report reviewed"],"sideEffects":["Installs app and stores app-owned observations"],"rollback":"Uninstall app and delete ~/.local/share/wifisignalwave"}
+]}
