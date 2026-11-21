@@ -8,6 +8,7 @@ on:
       - 'settings.gradle'
       - 'gradle.properties'
       - '.github/workflows/android-debug.yml'
+      - 'tools/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -23,6 +24,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Offline source checks
+        run: bash tools/check.sh
       - uses: android-actions/setup-android@v3
       - name: Android 34 platform
         run: sdkmanager 'platforms;android-34' 'build-tools;34.0.0'
@@ -31,11 +34,17 @@ jobs:
           gradle-version: '8.2.1'
       - name: Test and assemble
         run: gradle --no-daemon testDebugUnitTest assembleDebug
-      - name: Publish debug APK
+      - name: Verify APK and checksum
+        run: |
+          test -s app/build/outputs/apk/debug/app-debug.apk
+          (cd app/build/outputs/apk/debug && sha256sum app-debug.apk > app-debug.apk.sha256)
+      - name: Upload debug APK and hash
         uses: actions/upload-artifact@v4
         with:
           name: WifiSignalWave-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            app/build/outputs/apk/debug/app-debug.apk
+            app/build/outputs/apk/debug/app-debug.apk.sha256
           if-no-files-found: error
       - name: Test reports
         if: always()

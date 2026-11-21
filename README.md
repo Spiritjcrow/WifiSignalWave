@@ -1,17 +1,13 @@
 # WifiSignalWave v1.1.0
 
-Android OpenGL ES 3.0 live artistic wave visualization for the phone's **currently connected Wi-Fi** network. Displays RSSI in dBm, a smoothed estimated quality percentage, Wi-Fi frequency and reported link speed.
+Native Android OpenGL ES 3.0 wave visualizer showing RSSI in dBm, filtered *estimated* strength percentage, frequency and link speed for **currently connected Wi-Fi only**. The animated 3D grid is illustrative, not an RF spatial map. It does not detect nearby access points, geolocate devices or upload telemetry.
 
-- **What works:** local-only Wi-Fi metric polling (500 ms), Kalman smoothing, animated 3D wave (about 30 fps while active), touch rotation and pinch zoom.
-- **Not a spatial RF scanner:** no surrounding network discovery, positioning, signal direction detection, triangulation, user tracking or remote telemetry.
-- **No fees or accounts:** the app needs only local Android permissions. Building through GitHub Actions may be subject to account-level availability or limits.
-- **Permissions:** fine location to reveal Wi-Fi identity; nearby Wi-Fi permission also requested on Android 13+. Enable system Location if Android obscures the SSID.
-- **Requirements:** Android 8.0+ (API 26), OpenGL ES 3.0-capable phone, Android SDK 34, JDK 17 for building.
+Grant system Wi-Fi/location permissions if prompted. Tap START MONITORING, drag to rotate, pinch to zoom; STOP MONITORING stops polling and animation. Monitoring stops when app leaves foreground.
 
-## Build
+## Build routes
 
-Open a pull request from the source branch to main, or run the 'WifiSignalWave Android Debug' workflow from GitHub Actions after merging. Workflow installs Gradle 8.2.1 and Android SDK 34, then runs unit tests and debug assembly. A successful run uploads **WifiSignalWave-debug** containing **app-debug.apk**. Nothing is labeled verified until the workflow actually succeeds and the APK passes on-device testing.
+- GitHub Actions: .github/workflows/android-debug.yml (JDK17, SDK34, Gradle 8.2.1, JUnit, debug APK, SHA256).
+- Manual Codemagic mac_mini_m2: codemagic.yaml (debug only, no app-store publishing).
+- Local SDK/JDK17 environment: bash tools/check.sh && bash tools/build-debug-apk.sh. The build script verifies the official Gradle ZIP checksum before executing.
 
-For local Android Studio: use JDK 17 and Gradle 8.2.1. There is intentionally no fake `gradlew` wrapper.
-
-**Project status:** source staged; APK build and device behavior must be verified with CI/device evidence.
+No Gradle-wrapper impostor is used. APK compilation and Android device testing are **PENDING**. See docs/BUILD_VERIFICATION.md. Do not install an unverified or nonexistent APK.
