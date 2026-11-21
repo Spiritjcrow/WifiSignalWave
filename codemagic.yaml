@@ -1,0 +1,23 @@
+# Manual debug APK build fallback; no signing or publishing.
+workflows:
+  wifisignal-android-debug:
+    name: WifiSignalWave Android Debug APK
+    instance_type: mac_mini_m2
+    max_build_duration: 45
+    environment:
+      java: 17
+    scripts:
+      - name: Configure Android SDK
+        script: |
+          set -eu
+          test -n "$ANDROID_SDK_ROOT"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > "$CM_BUILD_DIR/local.properties"
+          sdkmanager 'platforms;android-34' 'build-tools;34.0.0'
+      - name: Offline source validation
+        script: bash tools/check.sh
+      - name: Test and assemble debug APK
+        script: bash tools/build-debug-apk.sh
+    artifacts:
+      - app/build/outputs/apk/debug/*.apk
+      - app/build/outputs/apk/debug/*.sha256
+      - app/build/test-results/testDebugUnitTest/**/*
